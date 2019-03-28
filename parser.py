@@ -56,7 +56,9 @@ def IMPLICA(atm1, atm2):
 def EXISTE_VIS(expr, neigh_dict, current_state, states_dict):
 
     neighbours = neigh_dict[current_state]
-    # print("Checando se existe!")
+    if len(neighbours) == 0:
+        print("Reached neighbour check up but no neighbours found")
+        sys.exit(-1)
 
     for nb in neighbours:
         nb_expr = nb + '-' + expr[1:]
@@ -65,6 +67,22 @@ def EXISTE_VIS(expr, neigh_dict, current_state, states_dict):
             return True
     else:
         return False
+
+def ALL_VIS(expr, neigh_dict, current_state, states_dict):
+
+    neighbours = neigh_dict[current_state]
+    if len(neighbours) == 0:
+        print("Reached neighbour check up but no neighbours found")
+        sys.exit(-1)
+        
+    for nb in neighbours:
+        nb_expr = nb + '-' + expr[1:]
+        print(nb_expr)
+        if( not run(nb_expr, states_dict, neigh_dict)):
+            return False
+    else:
+        return True 
+
 
 
 def is_valid(expr, states_dict):
@@ -87,6 +105,10 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
             #TODO logica para pegar proximo parentesis fechando aux = 0 quando chega nele 
             print("feature nao suportada ainda")
             return True
+
+        if expr.find('#') != -1:
+            return ALL_VIS(expr, neigh_dict, current_state, states_dict)
+
 
         if expr.find('@') != -1:
             return EXISTE_VIS(expr, neigh_dict, current_state, states_dict)
@@ -113,7 +135,7 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
                        evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('!') != -1:
-            print(expr[expr.find('!')+1:])
+            #print(expr[expr.find('!')+1:])
             return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict))
         
 

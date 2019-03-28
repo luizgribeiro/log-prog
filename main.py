@@ -20,6 +20,6 @@ if __name__ == "__main__":
 
 
     is_valid('p-A', states_dict)
-    print(run('p-@!CvC->C', states_dict, neighbours_dict))
+    print(run('p-#!CvC->C', states_dict, neighbours_dict))
 
     #print(IMPLICA(B,AND(A,B)))
