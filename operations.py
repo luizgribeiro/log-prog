@@ -30,7 +30,7 @@ def OR(atm1, atm2):
 
 
 def NOT(atm):
-    if (isinstance(atm, Atom):
+    if (isinstance(atm, Atom)):
         return not atm.val()
     else:
         return not atm
@@ -38,7 +38,4 @@ def NOT(atm):
 def IMPLICA(atm1, atm2):
     return OR(NOT(atm1), atm2)
 
-
-def =>(atm1, atm2):
-    return IMPLICA(atm1, atm2)
 
