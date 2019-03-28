@@ -53,7 +53,18 @@ def NOT(atm):
 def IMPLICA(atm1, atm2):
     return OR(NOT(atm1), atm2)
 
+def EXISTE_VIS(expr, neigh_dict, current_state, states_dict):
 
+    neighbours = neigh_dict[current_state]
+    # print("Checando se existe!")
+
+    for nb in neighbours:
+        nb_expr = nb + '-' + expr[1:]
+        print(nb_expr)
+        if(run(nb_expr, states_dict, neigh_dict)):
+            return True
+    else:
+        return False
 
 
 def is_valid(expr, states_dict):
@@ -63,7 +74,7 @@ def is_valid(expr, states_dict):
         print("Expressao incorreta")
         sys.exit(-1)
 
-def evaluate(expr, current_table):
+def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
 
     if isinstance(expr, bool):
         return expr
@@ -71,40 +82,46 @@ def evaluate(expr, current_table):
         return current_table[expr].val()
     else:
 
+        #################################################################################
         if expr.find('!(') != -1:
             #TODO logica para pegar proximo parentesis fechando aux = 0 quando chega nele 
             print("feature nao suportada ainda")
             return True
 
-        
+        if expr.find('@') != -1:
+            return EXISTE_VIS(expr, neigh_dict, current_state, states_dict)
+
         if expr.find('->') != -1:
             # print("                   ->")
             # print(expr[0:expr.find('->')] + str(evaluate(expr[0:expr.find('->')], current_table)) + "                              " + expr[expr.find('->')+2:] + str(evaluate(expr[expr.find('->')+2:], current_table)))
             # print("------------------------------------")
-            return IMPLICA(evaluate(expr[0:expr.find('->')], current_table), evaluate(expr[expr.find('->')+2:], current_table))
+            return IMPLICA(evaluate(expr[0:expr.find('->')], current_table, neigh_dict, current_state, states_dict),
+                           evaluate(expr[expr.find('->')+2:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('v') != -1:
             # print("\t^")
             # print(expr[0:expr.find('^')] + "        " + expr[expr.find('^')+1:])
             # print("------------------------------------")
-            return OR(evaluate(expr[0:expr.find('v')], current_table), evaluate(expr[expr.find('v')+1:], current_table))
+            return OR(evaluate(expr[0:expr.find('v')], current_table, neigh_dict, current_state, states_dict), 
+                      evaluate(expr[expr.find('v')+1:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('^') != -1:
             # print("\t^")
             # print(expr[0:expr.find('^')] + "        " + expr[expr.find('^')+1:])
             # print("------------------------------------")
-            return AND(evaluate(expr[0:expr.find('^')], current_table), evaluate(expr[expr.find('^')+1:], current_table))
+            return AND(evaluate(expr[0:expr.find('^')], current_table, neigh_dict, current_state, states_dict), 
+                       evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('!') != -1:
             print(expr[expr.find('!')+1:])
-            return NOT(evaluate(expr[expr.find('!')+1], current_table))
+            return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict))
         
 
-def run(expr, states_dict):
+def run(expr, states_dict, neigh_dict):
 
     current_state = expr[0]
     current_table = states_dict[current_state]
 
     #evaluate the expression in this state
-    return evaluate(expr[2:], current_table)
+    return evaluate(expr[2:], current_table, neigh_dict, current_state, states_dict)
 

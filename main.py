@@ -13,13 +13,13 @@ if __name__ == "__main__":
         'q': {'A':Atom(False), 'B': Atom(False), 'C': Atom(True)}
     }
 
-    neighbours_list = {
+    neighbours_dict= {
         'p': ['q']
     } 
 
 
 
     is_valid('p-A', states_dict)
-    print(run('p-!AvB->B', states_dict))
+    print(run('p-@!CvC->C', states_dict, neighbours_dict))
 
     #print(IMPLICA(B,AND(A,B)))
