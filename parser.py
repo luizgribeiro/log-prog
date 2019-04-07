@@ -87,9 +87,27 @@ def ALL_VIS(expr, neigh_dict, current_state, states_dict):
 
 def is_valid(expr, states_dict):
 
-    #checa se estado inicial esta representado
+    #checking if the number of parenthesis is consistent
+    p_counter = 0
+    for element in expr:
+        if element == '(':
+            p_counter += 1
+        elif element == ')':
+            p_counter -= 1
+    if p_counter != 0:
+        print("Expressao incorreta -- numero de parentesis inconsistente")
+        sys.exit(-1) 
+
+    #checking syntax
+    for element in expr:
+        if  (element not in ['(', ')', 'v', '^', '-', '>', '|']) or (element not in ['A', 'B', 'C', 'p']):
+            print("Expressao incorreta -- elementos invalidos presentes")
+            sys.exit(-1)
+        
+
+    #checking if initial state is a valid one
     if expr[0] not in states_dict:
-        print("Expressao incorreta")
+        print("Expressao incorreta --estado inicial inexistente")
         sys.exit(-1)
 
 def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
@@ -100,42 +118,36 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
         return current_table[expr].val()
     else:
 
+
         #################################################################################
         if expr.find('!(') != -1:
             #TODO logica para pegar proximo parentesis fechando aux = 0 quando chega nele 
             print("feature nao suportada ainda")
             return True
 
+        #for all neighbour states
         if expr.find('#') != -1:
             return ALL_VIS(expr, neigh_dict, current_state, states_dict)
 
 
+        #for at least one neighbour state
         if expr.find('@') != -1:
             return EXISTE_VIS(expr, neigh_dict, current_state, states_dict)
 
+        
         if expr.find('->') != -1:
-            # print("                   ->")
-            # print(expr[0:expr.find('->')] + str(evaluate(expr[0:expr.find('->')], current_table)) + "                              " + expr[expr.find('->')+2:] + str(evaluate(expr[expr.find('->')+2:], current_table)))
-            # print("------------------------------------")
             return IMPLICA(evaluate(expr[0:expr.find('->')], current_table, neigh_dict, current_state, states_dict),
                            evaluate(expr[expr.find('->')+2:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('v') != -1:
-            # print("\t^")
-            # print(expr[0:expr.find('^')] + "        " + expr[expr.find('^')+1:])
-            # print("------------------------------------")
             return OR(evaluate(expr[0:expr.find('v')], current_table, neigh_dict, current_state, states_dict), 
                       evaluate(expr[expr.find('v')+1:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('^') != -1:
-            # print("\t^")
-            # print(expr[0:expr.find('^')] + "        " + expr[expr.find('^')+1:])
-            # print("------------------------------------")
             return AND(evaluate(expr[0:expr.find('^')], current_table, neigh_dict, current_state, states_dict), 
                        evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict))
 
         if expr.find('!') != -1:
-            #print(expr[expr.find('!')+1:])
             return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict))
         
 
