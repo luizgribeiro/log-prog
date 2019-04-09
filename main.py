@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- 
-from parser import Atom, is_valid, run
+from parser import Atom, is_valid, run, sub_expr
 
 if __name__ == "__main__":
 
@@ -17,9 +17,11 @@ if __name__ == "__main__":
         'p': ['q']
     } 
 
+    expression = 'p-(A)'
 
+    print(sub_expr(expression))
 
-    is_valid('p-A', states_dict)
+    is_valid(expression, states_dict)
+    print(run(expression, states_dict, neighbours_dict))
+
     print(run('p-#!CvC->C', states_dict, neighbours_dict))
-
-    #print(IMPLICA(B,AND(A,B)))

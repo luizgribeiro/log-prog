@@ -98,25 +98,42 @@ def is_valid(expr, states_dict):
         print("Expressao incorreta -- numero de parentesis inconsistente")
         sys.exit(-1) 
 
-    #checking syntax
-    for element in expr:
-        if  (element not in ['(', ')', 'v', '^', '-', '>', '|']) or (element not in ['A', 'B', 'C', 'p']):
-            print("Expressao incorreta -- elementos invalidos presentes")
-            sys.exit(-1)
+    #TODO
+    # #checking syntax
+    # for element in expr:
+    #     if  (element not in ['(', ')', 'v', '^', '-', '>', '|']) or (element not in ['A', 'B', 'C', 'p']):
+    #         print("Expressao incorreta -- elementos invalidos presentes")
+    #         sys.exit(-1)
         
 
     #checking if initial state is a valid one
     if expr[0] not in states_dict:
         print("Expressao incorreta --estado inicial inexistente")
         sys.exit(-1)
+    
+def sub_expr(expr):
+
+    #getting the outter most parenthesis
+    if expr.find('(') != -1:
+        #retorna a nova expressão com numero
+        #substitui no numero
+        #TODO
+        print("parei aquin")
+
 
 def evaluate(expr, current_table, neigh_dict, current_state, states_dict):
+
 
     if isinstance(expr, bool):
         return expr
     if len(expr) == 1:
         return current_table[expr].val()
     else:
+
+
+        parent_dict = {}
+
+
 
 
         #################################################################################
