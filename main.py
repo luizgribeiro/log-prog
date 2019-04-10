@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*- 
-from parser import Atom, is_valid, run, sub_expr
+from parser import Atom, is_valid, test
 
 if __name__ == "__main__":
-
-
-
-    A = Atom(True)
-    B = Atom(False)
 
     states_dict= {
         'p': {'A':Atom(True), 'B': Atom(False), 'C': Atom(True)},
@@ -17,11 +12,34 @@ if __name__ == "__main__":
         'p': ['q']
     } 
 
-    expression = 'p-(A)'
+    ####sintaxe:
+        #estado inicial no começo seguido de -. Ex:
+            #'s-'
+        #operacoes validas:
+            #^ -> and
+            #v -> or
+            #! -> not
+            #-> -> implica
+            #@ -> existe um estado vizinho
+            # # -> para todo estado vizinho
 
-    print(sub_expr(expression))
+    #exemplos
 
-    is_valid(expression, states_dict)
-    print(run(expression, states_dict, neighbours_dict))
+    expr1 = 'p-#!(CvC)->C'
+    print(expr1)
+    print(test(expr1, states_dict, neighbours_dict))
 
-    print(run('p-#!CvC->C', states_dict, neighbours_dict))
+    
+    expr2 = 'p-@!(C^Bv(A^B))^!(C)->C'
+    print(expr2)
+    print(test(expr2, states_dict, neighbours_dict))
+
+
+    expr3 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)'
+    print(expr3)
+    print(test(expr3, states_dict, neighbours_dict))
+
+    expr4 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)->!(A)v(B^!C)->C'
+    print(expr4)
+    print(test(expr4, states_dict, neighbours_dict))
+
