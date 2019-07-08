@@ -103,7 +103,8 @@ def is_valid(expr, states_dict):
 
 
 def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_dict):
-    print(f'expr: {expr} %% state {current_state}')
+    #debugging statement (expression and current state)
+    print(f'expr: {expr} =====> state {current_state}')
     if isinstance(expr, bool):
         return expr
     if len(expr) == 1:
@@ -157,9 +158,10 @@ def test(expr, states_dict, neigh_dict):
 
 def run(expr, states_dict, neigh_dict, token_dict={}):
 
-    current_state = expr[0]
+    state_detector = expr.find('-')
+    current_state = expr[:state_detector]
     current_table = states_dict[current_state]
 
     #evaluate the expression in this state
-    return evaluate(expr[2:], current_table, neigh_dict, current_state, states_dict, token_dict)
+    return evaluate(expr[state_detector+1:], current_table, neigh_dict, current_state, states_dict, token_dict)
 

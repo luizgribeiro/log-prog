@@ -31,16 +31,16 @@ if __name__ == "__main__":
     print(test(expr1, states_dict, neighbours_dict))
 
     
-    expr2 = 'p-@!(C^Bv(A^B))^!(C)->C'
-    print(expr2)
-    print(test(expr2, states_dict, neighbours_dict))
+    # expr2 = 'p-@!(C^Bv(A^B))^!(C)->C'
+    # print(expr2)
+    # print(test(expr2, states_dict, neighbours_dict))
 
 
-    expr3 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)'
-    print(expr3)
-    print(test(expr3, states_dict, neighbours_dict))
+    # expr3 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)'
+    # print(expr3)
+    # print(test(expr3, states_dict, neighbours_dict))
 
-    expr4 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)->!(A)v(B^!C)->C'
-    print(expr4)
-    print(test(expr4, states_dict, neighbours_dict))
+    # expr4 = 'p-@!((!(C^Bv(A^B))^!(C)))->C^A^(BvA)->!(A)v(B^!C)->C'
+    # print(expr4)
+    # print(test(expr4, states_dict, neighbours_dict))
 
