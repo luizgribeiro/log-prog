@@ -54,37 +54,36 @@ def NOT(atm):
 def IMPLICA(atm1, atm2):
     return OR(NOT(atm1), atm2)
 
-def EXISTE_VIZ(expr, neigh_dict, current_state, states_dict, token_dict):
+def EXISTE_VIZ(expr, neigh_dict, current_state, states_dict, agentes_dict, token_dict, symbol):
 
-    neighbours = neigh_dict[current_state]
+    #achando relacionamento que queremos entre os estados
+    relacionamento =  find_relation(symbol, agentes_dict, 'any')
+
+    neighbours = neigh_dict[current_state][relacionamento]
     if len(neighbours) == 0:
         print("Reached neighbour check up but no neighbours found")
         sys.exit(-1)
 
     for nb in neighbours:
         nb_expr = nb + '-' + expr[1:]
-        if(run(nb_expr, states_dict, neigh_dict, token_dict)):
+        if(run(nb_expr, states_dict, neigh_dict, agentes_dict, token_dict)):
             return True
     else:
         return False
 
-def ALL_VIZ(expr, neigh_dict, current_state, states_dict, token_dict, agentes_dict, symbol):
-
+def ALL_VIZ(expr, neigh_dict, current_state, states_dict, agentes_dict, token_dict, symbol):
 
     #achando o tipo de relacionamento que queremos entre os estados
     relacionamento = find_relation(symbol, agentes_dict, 'all')
 
-    print(f"+++++++++++++++++++++++++relacionamento {relacionamento}")
-
-
-    neighbours = neigh_dict[current_state]
+    neighbours = neigh_dict[current_state][relacionamento]
     if len(neighbours) == 0:
         print("Reached neighbour check up but no neighbours found")
         sys.exit(-1)
         
     for nb in neighbours:
         nb_expr = nb + '-' + expr[1:]
-        if( not run(nb_expr, states_dict, neigh_dict, token_dict)):
+        if( not run(nb_expr, states_dict, neigh_dict, agentes_dict, token_dict)):
             return False
     else:
         return True 
@@ -110,7 +109,6 @@ def is_valid(expr, states_dict):
 def find_relation(symbol, agentes_dict, tipo):
 
     for agente in agentes_dict.keys():
-        print(agentes_dict)
         if agentes_dict[agente][tipo] == symbol:
             return agente
 
@@ -149,14 +147,15 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict, agente
 
         #for all neighbour states
         all_list = [x['all'] for x in agentes_dict.values()]
-        print(all_list)
-        for simbol in all_list:
-            if expr.find(simbol) != -1:
-                return ALL_VIZ(expr[expr.find(simbol):], neigh_dict, current_state, states_dict,  agentes_dict, token_dict, simbol)
+        for symbol in all_list:
+            if expr.find(symbol) != -1:
+                return ALL_VIZ(expr[expr.find(symbol):], neigh_dict, current_state, states_dict,  agentes_dict, token_dict, symbol)
 
         #for at least one neighbour state
-        if expr.find('@') != -1:
-            return EXISTE_VIZ(expr[expr.find('@')+1:], neigh_dict, current_state, states_dict, token_dict)
+        any_list = [x['any'] for x in agentes_dict.values()]
+        for symbol in any_list:
+            if expr.find(symbol)!= -1:
+                return EXISTE_VIZ(expr[expr.find(symbol)+1:], neigh_dict, current_state, states_dict, agentes_dict, token_dict, symbol)
 
  
         if expr.find('!') != -1:
@@ -169,7 +168,11 @@ def test(expr, states_dict, neigh_dict, agentes_dict):
     token_dict = {}
     tokenized_expression = sub_expr(expr, token_dict)
 
-    return run(tokenized_expression, states_dict, neigh_dict, agentes_dict, token_dict)
+    try:
+        result = run(tokenized_expression, states_dict, neigh_dict, agentes_dict, token_dict)
+        return result
+    except:
+        return False
 
 
 
