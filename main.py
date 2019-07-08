@@ -9,7 +9,8 @@ if __name__ == "__main__":
     }
 
     neighbours_dict= {
-        'p': ['q']
+        'p': ['q'],
+        'q': ['p']
     } 
 
     ####sintaxe:
@@ -25,7 +26,7 @@ if __name__ == "__main__":
 
     #exemplos
 
-    expr1 = 'p-#!(CvC)->C'
+    expr1 = 'p-#((CvC)->#C)'
     print(expr1)
     print(test(expr1, states_dict, neighbours_dict))
 

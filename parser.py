@@ -103,6 +103,7 @@ def is_valid(expr, states_dict):
 
 
 def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_dict):
+    print(f'expr: {expr} %% state {current_state}')
     if isinstance(expr, bool):
         return expr
     if len(expr) == 1:
@@ -118,15 +119,6 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_
                             )
     else:
 
-        #for all neighbour states
-        if expr.find('#') != -1:
-            return ALL_VIZ(expr, neigh_dict, current_state, states_dict, token_dict)
-
-
-        #for at least one neighbour state
-        if expr.find('@') != -1:
-            return EXISTE_VIZ(expr, neigh_dict, current_state, states_dict, token_dict)
-
         
         if expr.find('->') != -1:
             return IMPLICA(evaluate(expr[0:expr.find('->')], current_table, neigh_dict, current_state, states_dict, token_dict),
@@ -140,9 +132,19 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_
             return AND(evaluate(expr[0:expr.find('^')], current_table, neigh_dict, current_state, states_dict, token_dict), 
                        evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict, token_dict))
 
+        #for all neighbour states
+        if expr.find('#') != -1:
+            return ALL_VIZ(expr[expr.find('#'):], neigh_dict, current_state, states_dict, token_dict)
+
+        #for at least one neighbour state
+        if expr.find('@') != -1:
+            return EXISTE_VIZ(expr[expr.find('@')+1:], neigh_dict, current_state, states_dict, token_dict)
+
+ 
         if expr.find('!') != -1:
             return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict, token_dict))
-        
+
+      
 
 def test(expr, states_dict, neigh_dict):
 
