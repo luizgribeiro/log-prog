@@ -4,13 +4,13 @@ from parser import Atom, is_valid, test
 if __name__ == "__main__":
 
     states_dict= {
-        'p': {'A':Atom(True), 'B': Atom(False), 'C': Atom(True)},
-        'q': {'A':Atom(False), 'B': Atom(False), 'C': Atom(True)}
+        's1': {'A':Atom(True), 'B': Atom(False), 'C': Atom(True)},
+        's2': {'A':Atom(False), 'B': Atom(False), 'C': Atom(True)}
     }
 
     neighbours_dict= {
-        'p': ['q'],
-        'q': ['p']
+        's1': ['s2'],
+        's2': ['s1']
     } 
 
     ####sintaxe:
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     #exemplos
 
-    expr1 = 'p-#((CvC)->#C)'
+    expr1 = 's1-#((CvC)->#C)'
     print(expr1)
     print(test(expr1, states_dict, neighbours_dict))
 
