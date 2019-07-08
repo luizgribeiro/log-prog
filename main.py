@@ -9,8 +9,8 @@ if __name__ == "__main__":
     }
 
     neighbours_dict= {
-        's1': ['s2'],
-        's2': ['s1']
+        's1': {'A':['s2']},
+        's2': {'A':['s1']}
     } 
 
     agentes_dict = {
@@ -18,6 +18,9 @@ if __name__ == "__main__":
         'B': {'all': '$', 'exists': '&'},
         'C': {'all': '?', 'exists': '*'}
     }
+
+
+
 
     ####sintaxe:
         #estado inicial no começo seguido de -. Ex:
@@ -34,7 +37,7 @@ if __name__ == "__main__":
 
     expr1 = 's1-#((CvC)->#C)'
     print(expr1)
-    print(test(expr1, states_dict, neighbours_dict))
+    print(test(expr1, states_dict, neighbours_dict, agentes_dict))
 
     
     # expr2 = 's1-@!(C^Bv(A^B))^!(C)->C'

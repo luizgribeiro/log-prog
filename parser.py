@@ -68,7 +68,14 @@ def EXISTE_VIZ(expr, neigh_dict, current_state, states_dict, token_dict):
     else:
         return False
 
-def ALL_VIZ(expr, neigh_dict, current_state, states_dict, token_dict):
+def ALL_VIZ(expr, neigh_dict, current_state, states_dict, token_dict, agentes_dict, symbol):
+
+
+    #achando o tipo de relacionamento que queremos entre os estados
+    relacionamento = find_relation(symbol, agentes_dict, 'all')
+
+    print(f"+++++++++++++++++++++++++relacionamento {relacionamento}")
+
 
     neighbours = neigh_dict[current_state]
     if len(neighbours) == 0:
@@ -97,12 +104,18 @@ def is_valid(expr, states_dict):
         print("Expressao incorreta -- numero de parentesis inconsistente")
         sys.exit(-1) 
 
-    #TODO
-    # #checking syntax
+
+#achando relacionamento responsável pela saída do estado
+
+def find_relation(symbol, agentes_dict, tipo):
+
+    for agente in agentes_dict.keys():
+        print(agentes_dict)
+        if agentes_dict[agente][tipo] == symbol:
+            return agente
 
 
-
-def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_dict):
+def evaluate(expr, current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict):
     #debugging statement (expression and current state)
     print(f'expr: {expr} =====> state {current_state}')
     if isinstance(expr, bool):
@@ -116,26 +129,30 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_
                             neigh_dict,
                             current_state,
                             states_dict,
+                            agentes_dict,
                             token_dict
                             )
     else:
 
         
         if expr.find('->') != -1:
-            return IMPLICA(evaluate(expr[0:expr.find('->')], current_table, neigh_dict, current_state, states_dict, token_dict),
-                           evaluate(expr[expr.find('->')+2:], current_table, neigh_dict, current_state, states_dict, token_dict))
+            return IMPLICA(evaluate(expr[0:expr.find('->')], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict),
+                           evaluate(expr[expr.find('->')+2:], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict))
 
         if expr.find('v') != -1:
-            return OR(evaluate(expr[0:expr.find('v')], current_table, neigh_dict, current_state, states_dict, token_dict), 
-                      evaluate(expr[expr.find('v')+1:], current_table, neigh_dict, current_state, states_dict, token_dict))
+            return OR(evaluate(expr[0:expr.find('v')], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict), 
+                      evaluate(expr[expr.find('v')+1:], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict))
 
         if expr.find('^') != -1:
-            return AND(evaluate(expr[0:expr.find('^')], current_table, neigh_dict, current_state, states_dict, token_dict), 
-                       evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict, token_dict))
+            return AND(evaluate(expr[0:expr.find('^')], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict), 
+                       evaluate(expr[expr.find('^')+1:], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict))
 
         #for all neighbour states
-        if expr.find('#') != -1:
-            return ALL_VIZ(expr[expr.find('#'):], neigh_dict, current_state, states_dict, token_dict)
+        all_list = [x['all'] for x in agentes_dict.values()]
+        print(all_list)
+        for simbol in all_list:
+            if expr.find(simbol) != -1:
+                return ALL_VIZ(expr[expr.find(simbol):], neigh_dict, current_state, states_dict,  agentes_dict, token_dict, simbol)
 
         #for at least one neighbour state
         if expr.find('@') != -1:
@@ -143,25 +160,25 @@ def evaluate(expr, current_table, neigh_dict, current_state, states_dict, token_
 
  
         if expr.find('!') != -1:
-            return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict, token_dict))
+            return NOT(evaluate(expr[expr.find('!')+1], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict))
 
       
 
-def test(expr, states_dict, neigh_dict):
+def test(expr, states_dict, neigh_dict, agentes_dict):
 
     token_dict = {}
     tokenized_expression = sub_expr(expr, token_dict)
 
-    return run(tokenized_expression, states_dict, neigh_dict, token_dict)
+    return run(tokenized_expression, states_dict, neigh_dict, agentes_dict, token_dict)
 
 
 
-def run(expr, states_dict, neigh_dict, token_dict={}):
+def run(expr, states_dict, neigh_dict, agentes_dict, token_dict={}):
 
     state_detector = expr.find('-')
     current_state = expr[:state_detector]
     current_table = states_dict[current_state]
 
     #evaluate the expression in this state
-    return evaluate(expr[state_detector+1:], current_table, neigh_dict, current_state, states_dict, token_dict)
+    return evaluate(expr[state_detector+1:], current_table, neigh_dict, current_state, states_dict, agentes_dict, token_dict)
 
