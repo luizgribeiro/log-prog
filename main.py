@@ -36,23 +36,31 @@ def generate_trans_duvida(states_dict, agentes):
 
     return duvida
 
-def check_end(duvida_dict):
+def check_end(duvida_dict, estado_real, states_dict):
 
     vencedores = []
-    for estado, duvidas in duvida_dict.items():
-        if not duvidas:
-            vencedores.append(estado)
+    for agente, duvidas in duvida_dict.items():
+        duvidas_reais = 0
+        #para cada estado em que ele está em dúvida
+        for duvida in duvidas:
+            #se ele não tiver a carta 
+            if states_dict[duvida][agente] == estado_real[agente]:
+                duvidas_reais += 1
+        if duvidas_reais == 0:
+            vencedores.append(agente)
 
     if vencedores:
         return True, vencedores
 
     return False, None
 
-def poda_geral(agente, anuncio, states_dict):
+def poda_geral(anuncio, states_dict):
 
     deletados = []
+    agente = anuncio[0]
+    info = anuncio[1:]
     for estado, valores in states_dict.items():
-        if not eval(f'{valores[agente]}{anuncio}'):
+        if not eval(f'{valores[agente]}{info}'):
             deletados.append(estado)
 
     for estado in deletados:
@@ -105,10 +113,6 @@ if __name__ == "__main__":
 
     print("#######")
 
-    poda_inicial(estado_real, states_dict)
-
-
-    print("Poda inicial realizada. Apenas estados de dúvidas reais mantidos.")
 
     duvidas = generate_trans_duvida(states_dict, agentes)
 
@@ -118,14 +122,17 @@ if __name__ == "__main__":
             print(Fore.GREEN + f'Agente {agente} em dúvida nos estados {estados}')
         print(Style.RESET_ALL)
 
-        agente_de_acao = input(f'Sobre qual agente a informação será fornecida?\n')
         acao = input(f'Insira o anuncio realizado pelo agente (utilize a sintaxe do python)\n')
 
-        poda_geral(agente_de_acao, acao, states_dict)
+        poda_geral(acao, states_dict)
 
         duvidas = generate_trans_duvida(states_dict, agentes)
-        status, agente_vencedor = check_end(duvidas)
+        status, agente_vencedor = check_end(duvidas, estado_real, states_dict)
 
+        print_estados_duvidas(states_dict, agentes)
+        for agente, estados in duvidas.items():
+            print(Fore.GREEN + f'Agente {agente} em dúvida nos estados {estados}')
+        print(Style.RESET_ALL)
         if status == True:
             for agente in agente_vencedor:
                 print(Fore.RED + f"Agente vencedor: {agente}")
